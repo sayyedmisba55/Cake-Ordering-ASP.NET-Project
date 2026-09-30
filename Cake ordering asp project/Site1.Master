@@ -1,0 +1,373 @@
+﻿<%@ Master Language="C#"
+    AutoEventWireup="true"
+    CodeBehind="Site1.Master.cs"
+    Inherits="Cake_ordering_asp_project.Site1" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head runat="server">
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        <%: Page.Title %>
+    </title>
+
+    <!-- =========================
+         MASTER PAGE CSS
+    ========================= -->
+
+    <style type="text/css">
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fff8f2;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .main-header {
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar {
+            width: 100%;
+            min-height: 75px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 45px;
+        }
+
+        /* =========================
+           LOGO
+        ========================= */
+
+        .logo {
+            text-decoration: none;
+            color: #6b3520;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            font-family: Georgia, serif;
+        }
+
+        .logo span {
+            color: crimson;
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+
+            color: #6b3520;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            padding: 10px 16px;
+
+            border-radius: 20px;
+
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #ffd6a5;
+            color: #5a2818;
+        }
+
+        /* =========================
+           CART
+        ========================= */
+
+        .nav-cart {
+            position: relative;
+        }
+
+        .cart-number {
+            position: absolute;
+
+            top: -6px;
+            right: -8px;
+
+            background-color: crimson;
+            color: white;
+
+            font-size: 11px;
+            font-weight: bold;
+
+            min-width: 18px;
+            height: 18px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+            min-height: 500px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media screen and (max-width: 800px) {
+
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 10px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+
+        }
+
+    </style>
+
+
+    <!-- =========================
+         PAGE-SPECIFIC HEAD CONTENT
+    ========================= -->
+
+    <asp:ContentPlaceHolder
+        ID="head"
+        runat="server">
+    </asp:ContentPlaceHolder>
+
+</head>
+
+
+<body>
+
+    <form
+        id="form1"
+        runat="server">
+
+
+        <!-- =========================
+             HEADER
+        ========================= -->
+
+        <header class="main-header">
+
+            <div class="navbar">
+
+
+                <!-- LOGO -->
+
+                <a href="Home.aspx"
+                   class="logo">
+
+                    Cake<span>Heaven</span>
+
+                </a>
+
+
+                <!-- =========================
+                     NAVIGATION
+                ========================= -->
+
+                <nav class="nav-links">
+
+                    <a href="Home.aspx">
+                        Home
+                    </a>
+
+                    <a href="Products.aspx">
+                        Products
+                    </a>
+
+                    <a href="Register.aspx">
+                        Register
+                    </a>
+
+                    <a href="Login.aspx">
+                        Login
+                    </a>
+
+                    <!-- =========================
+                         MY ORDERS
+                    ========================= -->
+
+                    <a href="MyOrders.aspx">
+                        <i class="fa fa-box"></i>
+                        My Orders
+                    </a>
+
+                    <a href="ContactUs.aspx">
+                        Contact Us
+                    </a>
+
+                    <a href="Cart.aspx"
+                       class="nav-cart">
+
+                        🛒 Cart
+
+                        <span
+                            id="masterCartCount"
+                            class="cart-number">
+                            0
+                        </span>
+
+                    </a>
+
+                      <!-- =========================
+                        AdminLogin
+                       ========================= -->
+
+                <a href="Adminlogin.aspx">
+                    <i class="fa fa-box"></i>
+                      Admin Login
+               </a>
+
+                </nav>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             PAGE CONTENT
+        ========================= -->
+
+        <main class="main-content">
+
+            <asp:ContentPlaceHolder
+                ID="ContentPlaceHolder1"
+                runat="server">
+            </asp:ContentPlaceHolder>
+
+        </main>
+
+
+    </form>
+
+
+    <!-- =========================
+         CART COUNT JAVASCRIPT
+    ========================= -->
+
+    <script type="text/javascript">
+
+        function updateMasterCartCount() {
+
+            var storedCart =
+                localStorage.getItem("cart");
+
+            var cart = [];
+
+            if (storedCart) {
+
+                try {
+
+                    cart = JSON.parse(storedCart);
+
+                    if (!Array.isArray(cart)) {
+                        cart = [];
+                    }
+
+                }
+                catch (error) {
+
+                    cart = [];
+
+                }
+
+            }
+
+
+            var count = 0;
+
+
+            for (var i = 0; i < cart.length; i++) {
+
+                var quantity =
+                    Number(cart[i].qty) || 0;
+
+                count =
+                    count + quantity;
+
+            }
+
+
+            var cartCount =
+                document.getElementById("masterCartCount");
+
+
+            if (cartCount) {
+
+                cartCount.innerText =
+                    String(count);
+
+            }
+
+        }
+
+
+        window.addEventListener(
+            "load",
+            function () {
+
+                updateMasterCartCount();
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>
